@@ -7,9 +7,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
-import androidx.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.widget.Toast;
+
+import androidx.annotation.RequiresApi;
 
 import com.stardust.autojs.R;
 import com.stardust.enhancedfloaty.util.FloatingWindowPermissionUtil;
@@ -68,10 +69,11 @@ public class FloatingPermission {
 
     }
 
-
     public static void manageDrawOverlays(Context context) {
         try {
-            if (RomUtil.isMiui() && (TextUtils.equals("V10", RomUtil.getVersion() || TextUtils.equals("V11", RomUtil.getVersion()))
+            if (RomUtil.isMiui() &&
+                    (TextUtils.equals("V10", RomUtil.getVersion()) ||
+                            TextUtils.equals("V11", RomUtil.getVersion()))
                     && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 manageDrawOverlaysForAndroidM(context);
             } else {

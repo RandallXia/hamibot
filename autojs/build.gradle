@@ -70,7 +70,7 @@ dependencies {
     api(name: 'libtermexec-release', ext: 'aar')
     api(name: 'emulatorview-release', ext: 'aar')
     api(name: 'term-debug', ext: 'aar')
-    api(name: 'paddleocr', ext: 'aar')
+    //api(name: 'paddleocr', ext: 'aar')
     api files('libs/rhino-1.7.7.2.jar')
     api project(path: ':common')
     api project(path: ':automator')

@@ -3,7 +3,6 @@ package com.stardust.autojs.util;
 import android.os.Looper;
 
 import com.stardust.autojs.ocr.IOcrInstance;
-import com.stardust.autojs.ocr.PaddleOcrInstance;
 
 /**
  * Created by linke on 2021/12/10
@@ -15,7 +14,7 @@ public class OcrHelper {
     private boolean isInitialized;
 
     private OcrHelper() {
-        mOcrInstance = new PaddleOcrInstance();
+        mOcrInstance = null;
     }
 
     private static class Holder {

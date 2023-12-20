@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import com.stardust.autojs.annotation.ScriptInterface;
 import com.stardust.autojs.core.image.ImageWrapper;
 import com.stardust.autojs.ocr.OcrResult;
-import com.stardust.autojs.util.OcrHelper;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -14,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * Created by linke on 2021/12/08
  */
 public class Ocr {
-    
+
     //初始化超时时间5s
     private static final long INIT_TIMEOUT = 5000;
 
@@ -22,10 +21,10 @@ public class Ocr {
     public boolean init() {
         Ref<Boolean> isSuccess = new Ref<>(false);
         CountDownLatch countDownLatch = new CountDownLatch(1);
-        OcrHelper.getInstance().initIfNeeded(() -> {
+        /*OcrHelper.getInstance().initIfNeeded(() -> {
             countDownLatch.countDown();
             isSuccess.value = true;
-        });
+        });*/
         try {
             countDownLatch.await(INIT_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
@@ -43,12 +42,12 @@ public class Ocr {
         if (bitmap == null || bitmap.isRecycled()) {
             return OcrResult.buildFailResult();
         }
-        return OcrHelper.getInstance().getOcrInstance().recognize(bitmap);
+        return null;
     }
 
     @ScriptInterface
     public boolean end() {
-        OcrHelper.getInstance().end();
+        //OcrHelper.getInstance().end();
         return true;
     }
 
