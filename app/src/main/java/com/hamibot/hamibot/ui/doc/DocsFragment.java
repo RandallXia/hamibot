@@ -2,20 +2,18 @@ package com.hamibot.hamibot.ui.doc;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
 import android.webkit.WebView;
 
+import androidx.annotation.Nullable;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hamibot.hamibot.Pref;
 import com.hamibot.hamibot.R;
 import com.hamibot.hamibot.ui.main.QueryEvent;
 import com.hamibot.hamibot.ui.main.ViewPagerFragment;
-
-import com.stardust.util.BackPressedHandler;
-
 import com.hamibot.hamibot.ui.widget.EWebView;
+import com.stardust.util.BackPressedHandler;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
@@ -78,7 +76,9 @@ public class DocsFragment extends ViewPagerFragment implements BackPressedHandle
     public void onPause() {
         super.onPause();
         Bundle savedWebViewState = new Bundle();
-        mWebView.saveState(savedWebViewState);
+        if (mWebView != null) {
+            mWebView.saveState(savedWebViewState);
+        }
         getArguments().putBundle("savedWebViewState", savedWebViewState);
     }
 

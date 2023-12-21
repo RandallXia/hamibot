@@ -4,12 +4,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.GsonBuilder;
-import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory;
-import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import com.hamibot.hamibot.R;
 import com.hamibot.hamibot.network.api.ConfigApi;
 import com.hamibot.hamibot.network.util.WebkitCookieManagerProxy;
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory;
+import com.jakewharton.retrofit2.adapter.rxjava2.HttpException;
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -27,12 +27,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NodeBB {
 
-    public static final String BASE_URL = "https://";
+    public static final String BASE_URL = "https://www.baidu.com";
     private static final NodeBB sInstance = new NodeBB();
     private static final String LOG_TAG = "NodeBB";
     private Map<String, String> mXCsrfToken;
 
-    private Retrofit mRetrofit;
+    private final Retrofit mRetrofit;
 
     NodeBB() {
         mRetrofit = new Retrofit.Builder()

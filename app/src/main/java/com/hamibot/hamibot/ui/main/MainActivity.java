@@ -4,19 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-
-import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import androidx.core.view.GravityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.widget.Toolbar;
-import androidx.viewpager.widget.ViewPager;
-
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -25,7 +12,37 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
+import com.hamibot.hamibot.BuildConfig;
+import com.hamibot.hamibot.Pref;
+import com.hamibot.hamibot.R;
+import com.hamibot.hamibot.autojs.AutoJs;
+import com.hamibot.hamibot.external.foreground.ForegroundService;
+import com.hamibot.hamibot.model.explorer.Explorers;
 import com.hamibot.hamibot.notification.NotificationUtil;
+import com.hamibot.hamibot.services.CommandService;
+import com.hamibot.hamibot.tool.AccessibilityServiceTool;
+import com.hamibot.hamibot.ui.BaseActivity;
+import com.hamibot.hamibot.ui.common.NotAskAgainDialog;
+import com.hamibot.hamibot.ui.doc.DocsFragment;
+import com.hamibot.hamibot.ui.doc.DocsFragment_;
+import com.hamibot.hamibot.ui.log.LogActivity_;
+import com.hamibot.hamibot.ui.main.community.CommunityFragment;
+import com.hamibot.hamibot.ui.main.community.CommunityFragment_;
+import com.hamibot.hamibot.ui.main.scripts.MyScriptListFragment;
+import com.hamibot.hamibot.ui.main.scripts.MyScriptListFragment_;
+import com.hamibot.hamibot.ui.widget.CommonMarkdownView;
+import com.hamibot.hamibot.ui.widget.SearchViewItem;
 import com.stardust.app.FragmentPagerAdapterBuilder;
 import com.stardust.app.OnActivityResultDelegate;
 import com.stardust.autojs.core.permission.OnRequestPermissionsResultCallback;
@@ -37,33 +54,12 @@ import com.stardust.theme.ThemeColorManager;
 import com.stardust.util.BackPressedHandler;
 import com.stardust.util.DeveloperUtils;
 import com.stardust.util.DrawerAutoClose;
+import com.stardust.util.IntentUtil;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.ViewById;
-
-import com.hamibot.hamibot.BuildConfig;
-import com.hamibot.hamibot.Pref;
-import com.hamibot.hamibot.R;
-import com.hamibot.hamibot.autojs.AutoJs;
-import com.hamibot.hamibot.external.foreground.ForegroundService;
-import com.hamibot.hamibot.model.explorer.Explorers;
-import com.hamibot.hamibot.services.CommandService;
-import com.hamibot.hamibot.tool.AccessibilityServiceTool;
-import com.hamibot.hamibot.ui.BaseActivity;
-import com.hamibot.hamibot.ui.common.NotAskAgainDialog;
-import com.hamibot.hamibot.ui.doc.DocsFragment_;
-import com.hamibot.hamibot.ui.log.LogActivity_;
-import com.hamibot.hamibot.ui.main.community.CommunityFragment;
-import com.hamibot.hamibot.ui.main.community.CommunityFragment_;
-import com.hamibot.hamibot.ui.main.scripts.MyScriptListFragment_;
-import com.hamibot.hamibot.ui.main.task.TaskManagerFragment_;
-import com.hamibot.hamibot.ui.settings.SettingsActivity_;
-import com.hamibot.hamibot.ui.widget.CommonMarkdownView;
-import com.hamibot.hamibot.ui.widget.SearchViewItem;
-import com.stardust.util.IntentUtil;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -91,6 +87,8 @@ public class MainActivity extends BaseActivity implements OnActivityResultDelega
     @ViewById(R.id.fab)
     FloatingActionButton mFab;
 
+    private final OnActivityResultDelegate.Mediator mActivityResultMediator = new OnActivityResultDelegate.Mediator();
+
     // 绑定相关按钮
     @ViewById(R.id.bind)
     TextView mBindButton;
@@ -100,10 +98,11 @@ public class MainActivity extends BaseActivity implements OnActivityResultDelega
     TextView mBindCode;
 
     private FragmentPagerAdapterBuilder.StoredFragmentPagerAdapter mPagerAdapter;
-    private OnActivityResultDelegate.Mediator mActivityResultMediator = new OnActivityResultDelegate.Mediator();
-    private RequestPermissionCallbacks mRequestPermissionCallbacks = new RequestPermissionCallbacks();
+    private final RequestPermissionCallbacks mRequestPermissionCallbacks = new RequestPermissionCallbacks();
     // private VersionGuard mVersionGuard;
-    private BackPressedHandler.Observer mBackPressObserver = new BackPressedHandler.Observer();
+    private final BackPressedHandler.Observer mBackPressObserver = new BackPressedHandler.Observer();
+    @ViewById(R.id.tab_fm)
+    TabLayout mTab;
     private SearchViewItem mSearchViewItem;
     private MenuItem mLogMenuItem;
     private boolean mDocsSearchItemExpanded;
@@ -125,7 +124,7 @@ public class MainActivity extends BaseActivity implements OnActivityResultDelega
     @AfterViews
     void setUpViews() {
         setUpToolbar();
-        //setUpTabViewPager();
+        setUpTabViewPager();
         getWindow().getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
         registerBackPressHandlers();
@@ -186,9 +185,20 @@ public class MainActivity extends BaseActivity implements OnActivityResultDelega
     }
 
     private void setUpTabViewPager() {
+        MyScriptListFragment scriptListFragment = new MyScriptListFragment_();
+        scriptListFragment.setFab(mFab);
+        DocsFragment docsFragment = new DocsFragment_();
+        docsFragment.setFab(mFab);
+        CommunityFragment communityFragment = new CommunityFragment_();
+        communityFragment.setFab(mFab);
         mPagerAdapter = new FragmentPagerAdapterBuilder(this)
+                .add(scriptListFragment, "MyScriptListFragment")
+                .add(communityFragment, "communityFragment")
+                .add(docsFragment, "docsFragment")
                 .build();
         mViewPager.setAdapter(mPagerAdapter);
+
+        mTab.setupWithViewPager(mViewPager);
         setUpViewPagerFragmentBehaviors();
     }
 
@@ -222,6 +232,7 @@ public class MainActivity extends BaseActivity implements OnActivityResultDelega
     void button() {
         IntentUtil.browse(this, "https://hamibot.com/dashboard/robots");
     }
+
     @Click(R.id.textView4)
     void textView4() {
         IntentUtil.browse(this, "https://hamibot.com/guide");
@@ -270,7 +281,8 @@ public class MainActivity extends BaseActivity implements OnActivityResultDelega
                 .onNeutral((dialog, which) -> {
                     IntentUtil.browse(this, "https://hamibot.com/guide");
                 })
-                .cancelListener(dialog -> {})
+                .cancelListener(dialog -> {
+                })
                 .show();
     }
 

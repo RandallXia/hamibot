@@ -26,7 +26,7 @@ public class OcrHelper {
     }
 
     private synchronized void init() {
-        mOcrInstance.init();
+        //mOcrInstance.init();
     }
 
     public synchronized void initIfNeeded(InitializeCallback callback) {

@@ -2,10 +2,11 @@ package com.hamibot.hamibot.ui.main.community;
 
 import android.app.Activity;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.webkit.WebView;
 
+import androidx.annotation.Nullable;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.hamibot.hamibot.R;
 import com.hamibot.hamibot.network.NodeBB;
 import com.hamibot.hamibot.ui.main.QueryEvent;
@@ -92,10 +93,12 @@ public class CommunityFragment extends ViewPagerFragment implements BackPressedH
 
     @Override
     protected void onFabClick(FloatingActionButton fab) {
-        if (isInPostsPage()) {
-            mWebView.loadUrl("javascript:$('button[component=\"topic/reply\"]').click()");
-        } else {
-            mWebView.loadUrl("javascript:$('#new_topic').click()");
+        if (mWebView != null) {
+            if (isInPostsPage()) {
+                mWebView.loadUrl("javascript:$('button[component=\"topic/reply\"]').click()");
+            } else {
+                mWebView.loadUrl("javascript:$('#new_topic').click()");
+            }
         }
     }
 
@@ -117,7 +120,7 @@ public class CommunityFragment extends ViewPagerFragment implements BackPressedH
 
     private boolean isInPostsPage() {
         String url = mWebView.getUrl();
-        return url != null &&  url.matches(POSTS_PAGE_PATTERN);
+        return url != null && url.matches(POSTS_PAGE_PATTERN);
     }
 
     @Override

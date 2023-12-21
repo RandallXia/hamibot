@@ -3,21 +3,15 @@ package com.hamibot.hamibot.ui.main.scripts;
 import android.app.Activity;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+
 import androidx.annotation.Nullable;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import com.stardust.app.GlobalAppContext;
-import com.stardust.util.IntentUtil;
-
-import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EFragment;
-import org.androidannotations.annotations.ViewById;
 import com.hamibot.hamibot.Pref;
 import com.hamibot.hamibot.R;
 import com.hamibot.hamibot.external.fileprovider.AppFileProvider;
 import com.hamibot.hamibot.model.explorer.ExplorerDirPage;
 import com.hamibot.hamibot.model.explorer.Explorers;
-import com.hamibot.hamibot.model.script.Scripts;
 import com.hamibot.hamibot.tool.SimpleObserver;
 import com.hamibot.hamibot.ui.common.ScriptOperations;
 import com.hamibot.hamibot.ui.explorer.ExplorerView;
@@ -27,6 +21,12 @@ import com.hamibot.hamibot.ui.main.ViewPagerFragment;
 import com.hamibot.hamibot.ui.project.ProjectConfigActivity;
 import com.hamibot.hamibot.ui.project.ProjectConfigActivity_;
 import com.hamibot.hamibot.ui.viewmodel.ExplorerItemList;
+import com.stardust.app.GlobalAppContext;
+import com.stardust.util.IntentUtil;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -76,13 +76,12 @@ public class MyScriptListFragment extends ViewPagerFragment implements FloatingA
             mFloatingActionMenu.collapse();
         } else {
             mFloatingActionMenu.expand();
-
         }
     }
 
     // 悬浮按钮
     private void initFloatingActionMenuIfNeeded(final FloatingActionButton fab) {
-        /*if (mFloatingActionMenu != null)
+        if (mFloatingActionMenu != null)
             return;
         mFloatingActionMenu = getActivity().findViewById(R.id.floating_action_menu);
         mFloatingActionMenu.getState()
@@ -96,7 +95,7 @@ public class MyScriptListFragment extends ViewPagerFragment implements FloatingA
                                 .start();
                     }
                 });
-        mFloatingActionMenu.setOnFloatingActionButtonClickListener(this);*/
+        mFloatingActionMenu.setOnFloatingActionButtonClickListener(this);
     }
 
     @Override
@@ -136,7 +135,9 @@ public class MyScriptListFragment extends ViewPagerFragment implements FloatingA
     @Override
     public void onStop() {
         super.onStop();
-        mExplorerView.getSortConfig().saveInto(PreferenceManager.getDefaultSharedPreferences(getContext()));
+        if (mExplorerView != null) {
+            mExplorerView.getSortConfig().saveInto(PreferenceManager.getDefaultSharedPreferences(getContext()));
+        }
     }
 
     @Override
@@ -176,7 +177,6 @@ public class MyScriptListFragment extends ViewPagerFragment implements FloatingA
                         .extra(ProjectConfigActivity.EXTRA_NEW_PROJECT, true)
                         .start();
                 break;
-
         }
     }
 }
